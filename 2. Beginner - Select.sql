@@ -1,0 +1,17 @@
+SELECT *
+FROM employee_demographics;
+
+SELECT *
+FROM parks_and_recreation.employee_salary;
+
+#selecionar algumas colunas
+SELECT first_name,
+last_name,
+birth_date,
+age,
+(age + 10) * 10
+FROM parks_and_recreation.employee_demographics;
+
+#Distinct
+SELECT distinct gender 
+FROM parks_and_recreation.employee_demographics
