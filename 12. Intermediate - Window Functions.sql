@@ -1,4 +1,4 @@
--- Window Funtions
+-- Window Functions
 SELECT dem.first_name,
 dem.last_name,
 AVG(salary) OVER(PARTITION BY gender) __avg_gender
