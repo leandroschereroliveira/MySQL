@@ -25,9 +25,10 @@
 
 -- Obs.: Necessariamente a tabela resultado da subquery deve ter um apelido (AS).
 
--- 1. Subquery como filtro de uma nova consulta
--- Exercicio 1. Quais foram os pedidos realizados na loja onde o gerente é o Marcelo Castro?
 
+######### 1. Subquery como filtro de uma nova consulta  ################
+
+-- Exercicio 1. Quais foram os pedidos realizados na loja onde o gerente é o Marcelo Castro?
 select * from pedidos;
 select * from lojas;
 SELECT ID_Loja FROM lojas
@@ -94,9 +95,8 @@ WHERE ID_Cliente = (
 				LIMIT 1
                 );
 
--- 1.1 Subquery como filtro de uma nova consulta: filtrando por meio de uma lista de valores
+-- ** 1.1 Subquery como filtro de uma nova consulta: filtrando por meio de uma **lista** de valores **
 -- Exercicio 1. Descubra qual foi a receita total associada aos produtos da marca DELL
-
 SELECT 
 ID_Produto 
 FROM produtos 
@@ -111,4 +111,110 @@ WHERE ID_Produto IN (
 				FROM produtos 
 				WHERE Marca_Produto = 'DELL'
                 );
+                
+-- Exercicio 2. Quais pedidos foram feitos na região 'Sudeste'.
+SELECT * FROM pedidos;
+SELECT * FROM lojas;
+SELECT * FROM locais;
+
+SELECT Cidade FROM locais WHERE Região = 'Sudeste';
+
+SELECT ID_Loja
+FROM lojas 
+WHERE Loja IN (
+			SELECT Cidade
+            FROM locais 
+            WHERE Região = 'Sudeste' 
+			);
+
+SELECT * 
+FROM pedidos
+WHERE ID_Loja IN (
+				SELECT ID_Loja
+				FROM lojas 
+				WHERE Loja IN (
+							SELECT Cidade
+							FROM locais 
+							WHERE Região = 'Sudeste' 
+							)
+                );            
+
+##### 2. Subquery como uma nova coluna da consulta ####
+
+-- Exercio 1. Faça uma consulta q retorne todas as colunas da tabelas de produtos + uma coluna com a média de Preco_Unit.
+SELECT AVG(Preco_Unit) FROM pedidos;
+
+SELECT 
+	*,
+    (SELECT 
+	 AVG(Preco_Unit)
+     FROM pedidos) AS 'Média Geral de Preço'
+FROM produtos;
+     
+     
+#### 3. Subquery como fonte de dados de uma consulta principal ####     
+
+-- Exercicio 1. Do total de vendas por produto, qual foi a quantidade máxima vendida? E a quantidade mínima? e a média?
+
+SELECT
+	ID_Produto,
+    COUNT(*) AS 'Vendas'
+FROM pedidos
+GROUP BY ID_Produto;
+
+SELECT
+	MAX(Vendas) AS 'Máximo Vendas',
+    MIN(Vendas) AS 'Mínimo Vendas',
+    AVG(Vendas) AS 'Média Vendas'
+FROM (
+		SELECT
+		ID_Produto,
+		COUNT(*) AS 'Vendas'
+		FROM pedidos
+		GROUP BY ID_Produto
+        ) AS t;
+
+### EXISTS E NOT EXISTS  ######
+
+-- O operador EXISTS é usado para testar a existência de qualquer registro em uma subconsulta.
+-- O operador EXISTS retorna TRUE se a subconsulta retornar um ou mais registros.
+
+/*
+SELECT coluna(s)
+FROM tabela
+WHERE EXISTS
+(SELECT colunas(s) FROM tabela WHERE condição);
+*/
+
+-- Exericicio 1. Voce deverá verificar se todos as categorias possuem pelo menos 1 exemplar de produtos (na tabela de produtos); caso
+-- caso alguma categoria não possua nenhum exemplar você deverá descobrir qual é/ quais são.
+SELECT * FROM categorias;
+SELECT * FROM produtos;
+
+SELECT 
+	ID_Categoria 
+FROM categorias;
+
+SELECT 
+	ID_Categoria
+FROM produtos;
+
+SELECT 
+	ID_Categoria 
+FROM categorias
+WHERE EXISTS(
+			SELECT 
+			ID_Categoria
+			FROM produtos
+            WHERE categorias.ID_Categoria = produtos.ID_Categoria 
+            );
             
+SELECT 
+	*
+FROM categorias
+WHERE NOT EXISTS(
+			SELECT 
+			ID_Categoria
+			FROM produtos
+            WHERE categorias.ID_Categoria = produtos.ID_Categoria 
+            );
