@@ -32,3 +32,16 @@ SELECT
 	COUNT(DISTINCT Marca_Produto)
 FROM produtos;
 
+# SUM, AVG, MIN e MAX
+# Utilize a tabela PEDIDOS para realizar os seguintes cálculos:
+-- a) Soma de Receita_Total
+-- b) Média de Receita_Total
+-- c) Mínimo de Receita_Total
+-- d) Máximo de Receita_Total
+
+SELECT
+	SUM(Receita_Venda) AS 'Soma de Receita',
+    avg(Receita_Venda) as 'Média de Receita',
+    MIN(Receita_Venda) as 'Menor Receita',
+    MAX(Receita_Venda) as 'Maior Receita'
+    FROM pedidos;
